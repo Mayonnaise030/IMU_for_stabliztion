@@ -8,7 +8,8 @@ print("UART Demonstration Program")
 print("NVIDIA Jetson Nano Developer Kit")
 global recdata
 serial_port = serial.Serial(
-    port="/dev/ttyUSB0",
+    # port="/dev/ttyUSB0",
+    port="COM5",
     baudrate=115200,
     bytesize=serial.EIGHTBITS,
     parity=serial.PARITY_NONE,
