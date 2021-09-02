@@ -53,7 +53,7 @@ try:
         if serial_port.inWaiting() > 0:
             data = serial_port.read()
             data2 = int.from_bytes(data , 'big')
-            print(data2)
+            print(data , data2)
             serial_port.write(data)
             # if we get a carriage return, add a line feed too
             # \r is a carriage return; \n is a line feed
