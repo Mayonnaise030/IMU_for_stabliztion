@@ -7,20 +7,20 @@ import math
 import binascii
 import struct
 
-def convert(sample):
-    s0 = ord(sample[0])
-    s1 = ord(sample[1])
-    s2 = ord(sample[2])
-    s_plus = ord(b'\x00')
+# def convert(sample):
+#     s0 = ord(sample[0])
+#     s1 = ord(sample[1])
+#     s2 = ord(sample[2])
+#     s_plus = ord(b'\x00')
 
-    sign = (s0 >> 7) & 1
+#     sign = (s0 >> 7) & 1
 
-    if sign:
-        s = struct.unpack('>i', b'%c%c%c%c' % (s0,s1,s_plus,s2))[0]
-    else:
-        s = struct.unpack('>i', b'%c%c%c%c' % (s0,s1,s_plus,s2))[0]
-    print("abcd fuck you",s)
-    return s
+#     if sign:
+#         s = struct.unpack('>i', b'%c%c%c%c' % (s0,s1,s_plus,s2))[0]
+#     else:
+#         s = struct.unpack('>i', b'%c%c%c%c' % (s0,s1,s_plus,s2))[0]
+#     print("abcd fuck you",s)
+#     return s
 
 startbyte = b'\xfa'
 secondbyte = b'\xff'
@@ -85,8 +85,7 @@ class UART:
             if rc == startbyte:
                 recvINprogress = True
                 self.receivedBytes[0] = startbyte
-                print(self.ndx," ",int.from_bytes(rc , 'big'), rc ,self.receivedBytes[self.ndx])    
-
+                print(idx," ",int.from_bytes(rc , 'big'), rc ,self.receivedBytes[0])
             if recvINprogress == True and rc == secondbyte:
                 recvINprogress2 = True
 
@@ -94,13 +93,14 @@ class UART:
                 if self.ndx < self.len:
                     self.receivedBytes[self.ndx] = rc 
                     #print(rc)
+                    idx += 1
                     print(idx," ",int.from_bytes(rc , 'big'), rc ,self.receivedBytes[self.ndx])
-                    idx+=1
                     self.ndx = self.ndx+1
                 else: 
                     recvINprogress = False 
                     recvINprogress2 = False
                     self.ndx = 1
+                    idx = 0
                     self.newData = True
 
     def dataswapendian(self, data, length):
@@ -139,14 +139,14 @@ class UART:
                 self.data_q[i] = self.receivedBytes[19+i] 
             # self.dataswapendian(self.data_q, 12)
             #CONNECT BYTES
-            self.quat_temp[0] = convert(self.data_q[0:3])
-            self.quat_temp[1] = convert(self.data_q[3:6])
-            self.quat_temp[2] = convert(self.data_q[6:9])
-            self.quat_temp[3] = convert(self.data_q[9:12])
-            # self.quat_temp[0] = self.data_q[0] + self.data_q[1]   + self.data_q[2] + self.data_q[3]
-            # self.quat_temp[1] = self.data_q[4] + self.data_q[5]   + self.data_q[6] + self.data_q[7]
-            # self.quat_temp[2] = self.data_q[6] + self.data_q[7]   + self.data_q[8] + self.data_q[9]
-            # self.quat_temp[3] = self.data_q[8] + self.data_q[9]  + self.data_q[10] + self.data_q[11]
+            # self.quat_temp[0] = convert(self.data_q[0:3])
+            # self.quat_temp[1] = convert(self.data_q[3:6])
+            # self.quat_temp[2] = convert(self.data_q[6:9])
+            # self.quat_temp[3] = convert(self.data_q[9:12])
+            self.quat_temp[0] = self.data_q[0] + self.data_q[1]   + self.data_q[2] + self.data_q[3]
+            self.quat_temp[1] = self.data_q[4] + self.data_q[5]   + self.data_q[6] + self.data_q[7]
+            self.quat_temp[2] = self.data_q[6] + self.data_q[7]   + self.data_q[8] + self.data_q[9]
+            self.quat_temp[3] = self.data_q[8] + self.data_q[9]  + self.data_q[10] + self.data_q[11]
             #reverse
             self.quat_temp[0] = self.quat_temp[0][::-1]
             self.quat_temp[1] = self.quat_temp[1][::-1]
